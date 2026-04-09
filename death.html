@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>W-Anime - Главные герои</title>
+
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			transition: 0.3s;
+		}
+
+		body.light {
+			background: #f5f5f5;
+			color: #222;
+		}
+
+		body.dark {
+			background: #121212;
+			color: #fff;
+		}
+
+		/* Обновленная шапка */
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 15px 30px;
+			background: linear-gradient(90deg, #9303C5, #02060E);
+			color: white;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.nav a {
+			margin: 0 10px;
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+		}
+
+		.header-controls {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.search {
+			padding: 8px;
+			border-radius: 8px;
+			border: none;
+			outline: none;
+			font-family: inherit;
+		}
+
+		body.dark .search {
+			background: #333;
+			color: white;
+		}
+
+		.theme-btn {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			background: white;
+		}
+
+		body.dark .theme-btn {
+			background: #333;
+		}
+
+		/* Кнопка входа/выхода */
+		.auth-btn {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			background: #e04022;
+			color: white;
+			font-weight: bold;
+			transition: 0.3s;
+		}
+
+		.auth-btn:hover {
+			background: #ff512f;
+		}
+
+		#user-greeting {
+			font-weight: bold;
+			display: none;
+		}
+
+		main {
+			padding: 20px;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 20px;
+		}
+
+		.card {
+			background: white;
+			border-radius: 15px;
+			overflow: hidden;
+			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			transition: 0.3s;
+			display: flex;
+			flex-direction: column;
+			text-align: center; /* Центрируем имена */
+			padding-bottom: 10px;
+		}
+
+		body.dark .card {
+			background: #9303C5;
+		}
+
+		.card img {
+			width: 100%;
+			height: 250px;
+			object-fit: cover;
+		}
+
+		.card h3 {
+			margin: 10px;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+		}
+
+		/* Стили модального окна авторизации */
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: rgba(0,0,0,0.6);
+			justify-content: center; align-items: center;
+			z-index: 1000;
+		}
+
+		.modal-content {
+			background: white;
+			padding: 30px;
+			border-radius: 15px;
+			width: 300px;
+			text-align: center;
+			position: relative;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+		}
+
+		body.dark .modal-content {
+			background: #1e1e1e;
+			color: white;
+		}
+
+		.close-btn {
+			position: absolute;
+			top: 10px; right: 15px;
+			font-size: 24px;
+			cursor: pointer;
+			color: #888;
+		}
+
+		.close-btn:hover { color: #e04022; }
+
+		.modal-content input {
+			width: 90%;
+			padding: 10px;
+			margin: 10px 0;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			outline: none;
+		}
+
+		body.dark .modal-content input {
+			background: #333;
+			color: white;
+			border: none;
+		}
+
+		.modal-content button {
+			width: 100%;
+			padding: 10px;
+			background: #9303C5;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			margin-top: 10px;
+		}
+
+		.modal-content button:hover {
+			background: #7a02a3;
+		}
+
+		.toggle-auth {
+			margin-top: 15px;
+			font-size: 14px;
+			cursor: pointer;
+			color: #e04022;
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body class="light">
+
+<header>
+	<h1>🎌 W-Anime</h1>
+
+	<nav class="nav">
+		<a href="index.html">Каталог</a>
+		<a href="chasters.html">Персонажи</a>
+	</nav>
+
+	<div class="header-controls">
+		<input type="text" id="search" class="search" placeholder="Поиск героев...">
+		<button onclick="toggleTheme()" id="themeBtn" class="theme-btn">🌙</button>
+		
+		<span id="user-greeting">Привет, <span id="username-display"></span>!</span>
+		<button id="auth-main-btn" class="auth-btn" onclick="openAuthModal()">Войти</button>
+	</div>
+</header>
+
+<main>
+	<h2>Главные герои</h2>
+
+	<div class="grid" id="animeList"></div>
+</main>
+
+<div class="modal-overlay" id="auth-modal">
+	<div class="modal-content">
+		<span class="close-btn" onclick="closeAuthModal()">×</span>
+		<h2 id="modal-title">Вход</h2>
+		
+		<input type="text" id="username-input" placeholder="Имя пользователя">
+		<input type="password" id="password-input" placeholder="Пароль">
+		
+		<button id="submit-auth-btn" onclick="handleAuth()">Войти</button>
+		
+		<div class="toggle-auth" onclick="toggleAuthMode()">
+			Нет аккаунта? Зарегистрироваться
+		</div>
+	</div>
+</div>
+
+<script>
+	const anime = [
+		{ 
+			title: "Lait", 
+			img: "Lait.webp",
+		},
+		{ 
+			title: "Misa", 
+			img: "Misa.webp",
+		},
+		{ 
+			title: "L", 
+			img: "L.jfif",
+		},
+		{ 
+			title: "Rug", 
+			img: "Rug.jpg",
+		},
+		{ 
+			title: "Ram", 
+			img: "Ram.webp",
+		},
+	];
+
+	const list = document.getElementById('animeList');
+	const search = document.getElementById('search');
+	const themeBtn = document.getElementById('themeBtn');
+
+	// --- 1. ТЕМА ---
+	function initTheme() {
+		const savedTheme = localStorage.getItem('theme');
+		if (savedTheme === 'dark') {
+			document.body.classList.add('dark');
+			themeBtn.textContent = '☀️';
+		} else {
+			document.body.classList.remove('dark');
+			themeBtn.textContent = '🌙';
+		}
+	}
+
+	function toggleTheme() {
+		document.body.classList.toggle('dark');
+		const isDark = document.body.classList.contains('dark');
+		
+		if (isDark) {
+			themeBtn.textContent = '☀️';
+			localStorage.setItem('theme', 'dark');
+		} else {
+			themeBtn.textContent = '🌙';
+			localStorage.setItem('theme', 'light');
+		}
+	}
+
+	// --- 2. ОПТИМИЗИРОВАННЫЙ РЕНДЕР И ПОИСК ---
+	function render(data) {
+		const htmlString = data.map(a => {
+			return `
+				<div class="card">
+					<img src="${a.img}" alt="${a.title}">
+					<h3>${a.title}</h3>
+				</div>
+			`;
+		}).join('');
+
+		list.innerHTML = htmlString;
+	}
+
+	search.addEventListener("input", () => {
+		const value = search.value.toLowerCase();
+		const filtered = anime.filter(a => a.title.toLowerCase().includes(value));
+		render(filtered);
+	});
+
+	// --- 3. РЕГИСТРАЦИЯ И АВТОРИЗАЦИЯ ---
+	let isLoginMode = true;
+
+	function checkAuth() {
+		const currentUser = localStorage.getItem('currentUser');
+		const greeting = document.getElementById('user-greeting');
+		const nameDisplay = document.getElementById('username-display');
+		const mainBtn = document.getElementById('auth-main-btn');
+
+		if (currentUser) {
+			greeting.style.display = 'inline';
+			nameDisplay.innerText = currentUser;
+			mainBtn.innerText = 'Выйти';
+			mainBtn.onclick = logout;
+		} else {
+			greeting.style.display = 'none';
+			mainBtn.innerText = 'Войти';
+			mainBtn.onclick = openAuthModal;
+		}
+	}
+
+	function openAuthModal() {
+		document.getElementById('auth-modal').style.display = 'flex';
+		setLoginMode(true);
+	}
+
+	function closeAuthModal() {
+		document.getElementById('auth-modal').style.display = 'none';
+		document.getElementById('username-input').value = '';
+		document.getElementById('password-input').value = '';
+	}
+
+	function toggleAuthMode() {
+		setLoginMode(!isLoginMode);
+	}
+
+	function setLoginMode(mode) {
+		isLoginMode = mode;
+		const title = document.getElementById('modal-title');
+		const submitBtn = document.getElementById('submit-auth-btn');
+		const toggleText = document.querySelector('.toggle-auth');
+
+		if (isLoginMode) {
+			title.innerText = 'Вход';
+			submitBtn.innerText = 'Войти';
+			toggleText.innerText = 'Нет аккаунта? Зарегистрироваться';
+		} else {
+			title.innerText = 'Регистрация';
+			submitBtn.innerText = 'Зарегистрироваться';
+			toggleText.innerText = 'Уже есть аккаунт? Войти';
+		}
+	}
+
+	function handleAuth() {
+		const username = document.getElementById('username-input').value.trim();
+		const password = document.getElementById('password-input').value.trim();
+
+		if (!username || !password) {
+			alert("Заполните все поля!");
+			return;
+		}
+
+		let users = JSON.parse(localStorage.getItem('users')) || {};
+
+		if (isLoginMode) {
+			if (users[username] && users[username] === password) {
+				localStorage.setItem('currentUser', username);
+				closeAuthModal();
+				checkAuth();
+			} else {
+				alert("Неверное имя пользователя или пароль!");
+			}
+		} else {
+			if (users[username]) {
+				alert("Пользователь с таким именем уже существует!");
+			} else {
+				users[username] = password;
+				localStorage.setItem('users', JSON.stringify(users));
+				localStorage.setItem('currentUser', username); 
+				alert("Регистрация прошла успешно!");
+				closeAuthModal();
+				checkAuth();
+			}
+		}
+	}
+
+	function logout() {
+		localStorage.removeItem('currentUser');
+		checkAuth();
+	}
+
+	// Инициализация при загрузке
+	initTheme();
+	checkAuth();
+	render(anime);
+</script>
+
+</body>
+</html>

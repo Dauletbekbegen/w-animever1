@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>W-Anime</title>
+
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			transition: 0.3s;
+		}
+
+		body.light {
+			background: #f5f5f5;
+			color: #222;
+		}
+
+		body.dark {
+			background: #121212;
+			color: #fff;
+		}
+
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 15px 30px;
+			background: linear-gradient(90deg, #9303C5, #02060E);
+			color: white;
+			position: relative; 
+		}
+
+		.header-top {
+			display: flex;
+			align-items: center;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 24px;
+		}
+
+		/* Гамбургер батырмасы (бастапқыда жасырын) */
+		.hamburger {
+			display: none;
+			background: none;
+			border: none;
+			color: white;
+			font-size: 28px;
+			cursor: pointer;
+		}
+
+		/* Навигация (Мәзір) - Нақты ортада */
+		.nav.desktop-nav {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			gap: 15px;
+		}
+
+		.nav.mobile-nav {
+			display: none; /* Тек мобилді нұсқада көрінеді */
+		}
+
+		.nav a {
+			text-decoration: none;
+			color: white;
+			font-weight: bold;
+		}
+
+		/* Оң жақ панель */
+		.right-side {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.search-theme-container {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.menu-container {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.header-controls {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.search {
+			padding: 8px;
+			border-radius: 8px;
+			border: none;
+			outline: none;
+			font-family: inherit;
+		}
+
+		.genre-select {
+			padding: 8px;
+			border-radius: 8px;
+			border: none;
+			outline: none;
+			background: white;
+			cursor: pointer;
+			font-family: inherit;
+		}
+
+		body.dark .genre-select, body.dark .search {
+			background: #333;
+			color: white;
+		}
+
+		.theme-btn {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			background: white;
+		}
+
+		body.dark .theme-btn {
+			background: #333;
+		}
+
+		.auth-btn {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			background: #e04022;
+			color: white;
+			font-weight: bold;
+			transition: 0.3s;
+		}
+
+		.auth-btn:hover {
+			background: #ff512f;
+		}
+
+		#user-greeting {
+			font-weight: bold;
+			display: none;
+		}
+
+		main {
+			padding: 20px;
+		}
+
+		/* Карточкалар: ортада нақты 4 баған */
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+
+		#catalog-section h2 {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.card {
+			background: white;
+			border-radius: 15px;
+			overflow: hidden;
+			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			transition: 0.3s;
+			display: flex;
+			flex-direction: column;
+		}
+
+		body.dark .card {
+			background: #9303C5;
+		}
+
+		.card img {
+			width: 100%;
+			height: 250px;
+			object-fit: cover;
+		}
+
+		.card h3 {
+			margin: 10px;
+		}
+
+		.genres {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+			padding: 0 10px 15px 10px;
+		}
+
+		.genre-tag {
+			background: #e0e0e0;
+			color: #333;
+			padding: 4px 8px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		body.dark .genre-tag {
+			background: #02060E;
+			color: #fff;
+		}
+
+		.card button {
+			margin: auto 10px 10px 10px;
+			width: calc(100% - 20px);
+			background: #02060E;
+			color: white;
+			padding: 10px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			transition: background 0.3s;
+		}
+
+		.card button:hover {
+			background: #e04022;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+		}
+
+		/* Стили плеера */
+		#player-section {
+			display: none;
+			padding: 20px;
+			max-width: 900px;
+			margin: 0 auto;
+		}
+
+		.back-btn {
+			background: #555;
+			color: white;
+			padding: 10px 15px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-bottom: 20px;
+			font-weight: bold;
+		}
+
+		.back-btn:hover {
+			background: #333;
+		}
+
+		.iframe-container {
+			position: relative;
+			padding-bottom: 56.25%;
+			height: 0;
+			border-radius: 10px;
+			overflow: hidden;
+			background: #000;
+		}
+
+		.iframe-container iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+		
+		.video-placeholder {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #1e1e1e;
+			color: white;
+			font-size: 24px;
+			font-weight: bold;
+			text-align: center;
+			display: none; 
+		}
+
+		.episode-buttons {
+			display: flex;
+			gap: 10px;
+			margin-top: 15px;
+			flex-wrap: wrap;
+		}
+
+		.ep-btn {
+			padding: 8px 15px;
+			background: #2f3542;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: 0.3s;
+			font-weight: bold;
+		}
+
+		.ep-btn:hover {
+			background: #57606f;
+		}
+
+		.ep-btn.active {
+			background: #ff512f;
+		}
+
+		/* Стили модального окна авторизации */
+		.modal-overlay {
+			display: none; 
+			position: fixed; 
+			top: 0; left: 0; width: 100%; height: 100%; 
+			background: rgba(0,0,0,0.6); 
+			justify-content: center; align-items: center; 
+			z-index: 1000;
+		}
+
+		.modal-content {
+			background: white; 
+			padding: 30px; 
+			border-radius: 15px; 
+			width: 300px; 
+			text-align: center; 
+			position: relative;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+		}
+
+		body.dark .modal-content {
+			background: #1e1e1e;
+			color: white;
+		}
+
+		.close-btn {
+			position: absolute;
+			top: 10px; right: 15px;
+			font-size: 24px;
+			cursor: pointer;
+			color: #888;
+		}
+
+		.close-btn:hover { color: #e04022; }
+
+		.modal-content input {
+			width: 90%;
+			padding: 10px;
+			margin: 10px 0;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+			outline: none;
+		}
+
+		body.dark .modal-content input {
+			background: #333;
+			color: white;
+			border: none;
+		}
+
+		.modal-content button {
+			width: 100%;
+			padding: 10px;
+			background: #9303C5;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: bold;
+			margin-top: 10px;
+		}
+
+		.modal-content button:hover {
+			background: #7a02a3;
+		}
+
+		.toggle-auth {
+			margin-top: 15px;
+			font-size: 14px;
+			cursor: pointer;
+			color: #e04022;
+			text-decoration: underline;
+		}
+
+		/* АДАПТИВТІК НҰСҚА (Телефондарға) */
+		@media (max-width: 950px) {
+			.grid {
+				grid-template-columns: repeat(2, 1fr); 
+			}
+		}
+
+		@media (max-width: 800px) {
+			header {
+				flex-direction: column;
+				align-items: stretch;
+				padding: 15px;
+			}
+
+			.header-top {
+				width: 100%;
+				justify-content: space-between;
+			}
+
+			.hamburger {
+				display: block; 
+			}
+
+			.nav.desktop-nav {
+				display: none; 
+			}
+
+			.nav.mobile-nav {
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+				margin-bottom: 20px;
+				align-items: center;
+			}
+
+			.nav.mobile-nav a {
+				color: inherit;
+				font-size: 18px;
+			}
+
+			.right-side {
+				flex-direction: column;
+				width: 100%;
+				gap: 0;
+			}
+
+			.search-theme-container {
+				width: 100%;
+				margin-top: 15px;
+				display: flex;
+				gap: 10px;
+			}
+
+			.search {
+				flex: 1; /* Іздеу жолағы қалған орынды алады */
+			}
+
+			/* Гамбургер мәзірінің стилі */
+			.menu-container {
+				display: none; 
+				flex-direction: column;
+				position: absolute;
+				top: 65px; /* Логотиптің астынан ашылады */
+				right: 15px;
+				background: #fff;
+				color: #222;
+				padding: 20px;
+				border-radius: 12px;
+				box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+				z-index: 1000;
+				width: 200px;
+			}
+
+			body.dark .menu-container {
+				background: #222;
+				color: #fff;
+			}
+
+			.menu-container.active {
+				display: flex; 
+			}
+
+			.header-controls {
+				flex-direction: column;
+				width: 100%;
+				gap: 10px;
+			}
+
+			.genre-select, .auth-btn {
+				width: 100%;
+				text-align: center;
+			}
+		}
+
+		@media (max-width: 500px) {
+			.grid {
+				grid-template-columns: repeat(2, 1fr); /* Мобильді нұсқада 2 қатар */
+				gap: 10px; /* Карточкалар сыйып тұруы үшін арақашықтықты азайту */
+			}
+
+			/* Жанрлар кішірейтіледі */
+			.genre-tag {
+				font-size: 9px;
+				padding: 3px 6px;
+			}
+
+			/* Батырмалар (Смотреть) кішірейтіледі */
+			.card button {
+				font-size: 11px !important;
+				padding: 5px !important;
+			}
+		}
+	</style>
+</head>
+
+<body class="light">
+
+<header>
+	<div class="header-top">
+		<h1>🎌 W-Anime</h1>
+		<button class="hamburger" onclick="toggleMenu()">☰</button>
+	</div>
+
+	<nav class="nav desktop-nav">
+		<a href="#" onclick="closePlayer()">Каталог</a>
+		<a href="chasters.html">Персонажи</a>
+	</nav>
+
+	<div class="right-side">
+		<div class="search-theme-container">
+			<input type="text" id="search" class="search" placeholder="Поиск аниме...">
+			<button onclick="toggleTheme()" id="themeBtn" class="theme-btn">🌙</button>
+		</div>
+		
+		<div class="menu-container" id="menuContainer">
+			<nav class="nav mobile-nav">
+				<a href="#" onclick="closePlayer()">Каталог</a>
+				<a href="chasters.html">Персонажи</a>
+			</nav>
+
+			<div class="header-controls">
+				<select id="genreFilter" class="genre-select">
+					<option value="">Все жанры</option>
+				</select>
+				
+				<span id="user-greeting">Привет, <span id="username-display"></span>!</span>
+				<button id="auth-main-btn" class="auth-btn" onclick="openAuthModal()">Войти</button>
+			</div>
+		</div>
+	</div>
+</header>
+
+<main>
+	<div id="catalog-section">
+		<h2>Каталог аниме</h2>
+		<div class="grid" id="animeList"></div>
+	</div>
+
+	<div id="player-section">
+		<button class="back-btn" onclick="closePlayer()">⬅ Назад в каталог</button>
+		<h2 id="player-title">Название аниме</h2>
+		
+		<div class="iframe-container">
+			<iframe id="video-iframe" src="" frameborder="0" allowfullscreen="1" allow="autoplay; encrypted-media; fullscreen; picture-in-picture"></iframe>
+			<div id="video-placeholder" class="video-placeholder">Видео скоро появится 🎬</div>
+		</div>
+
+		<div class="episode-buttons" id="episode-buttons"></div>
+	</div>
+</main>
+
+<div class="modal-overlay" id="auth-modal">
+	<div class="modal-content">
+		<span class="close-btn" onclick="closeAuthModal()">×</span>
+		<h2 id="modal-title">Вход</h2>
+		
+		<input type="text" id="username-input" placeholder="Имя пользователя">
+		<input type="password" id="password-input" placeholder="Пароль">
+		
+		<button id="submit-auth-btn" onclick="handleAuth()">Войти</button>
+		
+		<div class="toggle-auth" onclick="toggleAuthMode()">
+			Нет аккаунта? Зарегистрироваться
+		</div>
+	</div>
+</div>
+
+<script>
+const defaultAnime = [
+        { 
+            id: 1,
+            title: "Гуррен-Лаганн", 
+            img: "guren.jpg",
+            genres: ["Меха", "Экшен", "Приключения"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241443&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241440&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241515&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241513&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241510&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241508&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241505&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241503&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241500&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-25011059&id=159776968&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241495&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241492&hash=" },
+                { title: "13 серия", src: "https://vkvideo.ru/video_ext.php?oid=-229638881&id=456239364&hash=" },
+                { title: "14 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241486&hash=" },
+                { title: "15 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241483&hash=" },
+                { title: "16 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241480&hash=" },
+                { title: "17 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241477&hash=" },
+                { title: "18 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241474&hash=" },
+                { title: "19 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241472&hash=" },
+                { title: "20 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241469&hash=" },
+                { title: "21 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241466&hash=" },
+                { title: "22 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241464&hash=" },
+                { title: "23 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241461&hash=" },
+                { title: "24 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241459&hash=" },
+                { title: "25 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241456&hash=" },
+                { title: "26 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241454&hash=" },
+                { title: "27 серия", src: "https://vkvideo.ru/video_ext.php?oid=-221125211&id=456241452&hash=" }
+            ]
+        },
+        { 
+            id: 2,
+            title: "Ван-Пис", 
+            img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
+            genres: ["Сёнэн", "Приключения", "Комедия"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-213334163&id=456243811&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-40709881&id=162916801&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-40709881&id=162916835&hash=" },
+            ]
+        },
+        { 
+            id: 3,
+            title: "Блич", 
+            img: "bleach.jpg",
+            genres: ["Сёнэн", "Экшен", "Сверхъестественное"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-185087421&id=456239642&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189724571&id=456252305&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-130045726&id=456240451&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456247779&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-174203870&id=456239201&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-174203870&id=456239202&hash=" }
+            ]
+        },
+        { 
+            id: 4,
+            title: "Тетрадь смерти", 
+            img: "death.jpg",
+            genres: ["Детектив", "Психология", "Триллер"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-30559894&id=161216948&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239024&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239025&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239026&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239027&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239028&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239029&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239030&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239031&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239032&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239033&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239034&hash=" },
+                { title: "13 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239035&hash=" },
+                { title: "14 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239036&hash=" },
+                { title: "15 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239037&hash=" },
+                { title: "16 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239038&hash=" },
+                { title: "17 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239039&hash=" },
+                { title: "18 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239040&hash=" },
+                { title: "19 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239041&hash=" },
+                { title: "20 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239042&hash=" },
+                { title: "21 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239043&hash=" },
+                { title: "22 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239044&hash=" },
+                { title: "23 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239045&hash=" },
+                { title: "24 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239046&hash=" },
+                { title: "25 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239047&hash=" },
+                { title: "26 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239048&hash=" },
+                { title: "27 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239049&hash=" },
+                { title: "28 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239050&hash=" },
+                { title: "29 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239051&hash=" },
+                { title: "30 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239052&hash=" },
+                { title: "31 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239053&hash=" },
+                { title: "32 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239054&hash=" },
+                { title: "33 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239055&hash=" },
+                { title: "34 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239056&hash=" },
+                { title: "35 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239057&hash=" },
+                { title: "36 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239058&hash=" },
+                { title: "37 серия", src: "https://vkvideo.ru/video_ext.php?oid=-196980150&id=456239059&hash=" }
+            ]
+        },
+        { 
+            id: 5,
+            title: "Боец Баки", 
+            img: "baki.jpeg",
+            genres: ["Боевые искусства", "Сёнэн", "Спорт"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239020&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239022&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239023&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239024&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239025&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239026&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239027&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239028&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239029&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239030&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239075&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239032&hash=" },
+                { title: "13 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239029&hash=" },
+                { title: "14 серия", src: "https://vkvideo.ru/video_ext.php?oid=-6850042&id=136548457&hash=" },
+                { title: "15 серия", src: "https://vkvideo.ru/video_ext.php?oid=-229638881&id=456239364&hash=" },
+                { title: "16 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239036&hash=" },
+                { title: "17 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239037&hash=" },
+                { title: "18 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239038&hash=" },
+                { title: "19 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239039&hash=" },
+                { title: "20 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239040&hash=" },
+                { title: "21 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239041&hash=" },
+                { title: "22 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239042&hash=" },
+                { title: "23 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239043&hash=" },
+                { title: "24 серия", src: "https://vkvideo.ru/video_ext.php?oid=-190408951&id=456239044&hash=" }
+            ]
+        },
+        { 
+            id: 6,
+            title: "Сага о Винланде", 
+            img: "saga.jpg",
+            genres: ["Сэйнэн", "Драма", "Исторический"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-185087421&id=456240786&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239154&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239155&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239156&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239157&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239158&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239159&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239160&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239392&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239494&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239708&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-189288162&id=456239763&hash=" },
+                { title: "13 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456251478&hash=" },
+                { title: "14 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456251858&hash=" },
+                { title: "15 серия", src: "https://vkvideo.ru/video_ext.php?oid=-216985864&id=456240385&hash=" },
+                { title: "16 серия", src: "https://vkvideo.ru/video_ext.php?oid=-216985864&id=456240482&hash=" },
+                { title: "17 серия", src: "https://vkvideo.ru/video_ext.php?oid=-216985864&id=456240582&hash=" },
+                { title: "18 серия", src: "https://vkvideo.ru/video_ext.php?oid=-214174589&id=456240575&hash=" },
+                { title: "19 серия", src: "https://vkvideo.ru/video_ext.php?oid=-218499107&id=456239714&hash=" },
+                { title: "20 серия", src: "https://vkvideo.ru/video_ext.php?oid=-216985864&id=456240846&hash=" },
+                { title: "21 серия", src: "https://vkvideo.ru/video_ext.php?oid=-185087421&id=456243644&hash=" },
+                { title: "22 серия", src: "https://vkvideo.ru/video_ext.php?oid=-185087421&id=456243683&hash=" },
+                { title: "23 серия", src: "https://vkvideo.ru/video_ext.php?oid=-218499107&id=456240146&hash=" },
+                { title: "24 серия", src: "https://vkvideo.ru/video_ext.php?oid=-218499107&id=456240244&hash=" }
+            ]
+        },
+        { 
+            id: 7,
+            title: "Твое имя",
+            img: "yn.webp",
+            genres: ["Романтика","Драма","Школа"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-220018529&id=456243599&hash=" }
+            ]
+        },
+        { 
+            id: 8,
+            title: "Эта фарфоровая кукла влюбилась",
+            img: "Cu.jfif",
+            genres: ["Романтика","Повседневность","Школа"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240426&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240466&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240556&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-181260962&id=456240779&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240653&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-181260962&id=456240805&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-181260962&id=456240832&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240813&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240867&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-181260962&id=456240902&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456240966&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-228529247&id=456241011&hash=" },
+            ]
+            },
+            { 
+            id: 9,
+            title: "Токийский гуль",
+            img: "kan.avif",
+            genres: ["Драма ","Экшен","Сэйнэн"],
+            episodes: [
+                { title: "1 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456248022&hash=" },
+                { title: "2 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456248023&hash=" },
+                { title: "3 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239149&hash=" },
+                { title: "4 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224823558&id=456239069&hash=" },
+                { title: "5 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224823558&id=456239073&hash=" },
+                { title: "6 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239180&hash=" },
+                { title: "7 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456248028&hash=" },
+                { title: "8 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239185&hash=" },
+                { title: "9 серия", src: "https://vkvideo.ru/video_ext.php?oid=-172253292&id=456248030&hash=" },
+                { title: "10 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239192&hash=" },
+                { title: "11 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239193&hash=" },
+                { title: "12 серия", src: "https://vkvideo.ru/video_ext.php?oid=-224282868&id=456239194&hash=" },
+            ]
+            },
+    ];
+
+if (!localStorage.getItem('animeData')) {
+	localStorage.setItem('animeData', JSON.stringify(defaultAnime));
+}
+let isLoginMode = true; 
+const anime = JSON.parse(localStorage.getItem('animeData'));
+const list = document.getElementById('animeList');
+const search = document.getElementById('search');
+const genreFilter = document.getElementById('genreFilter');
+const themeBtn = document.getElementById('themeBtn');
+
+// --- Функционал Гамбургер мәзірі ---
+function toggleMenu() {
+	document.getElementById('menuContainer').classList.toggle('active');
+}
+
+// --- 2. ФУНКЦИИ ИНТЕРФЕЙСА ---
+
+function initGenres() {
+	const allGenres = new Set();
+	anime.forEach(a => {
+		if (a.genres) a.genres.forEach(g => allGenres.add(g));
+	});
+	genreFilter.innerHTML = '<option value="">Все жанры</option>';
+	allGenres.forEach(genre => {
+		const option = document.createElement('option');
+		option.value = genre;
+		option.textContent = genre;
+		genreFilter.appendChild(option);
+	});
+}
+
+function initTheme() {
+	const savedTheme = localStorage.getItem('theme');
+	if (savedTheme === 'dark') {
+		document.body.classList.add('dark');
+		themeBtn.textContent = '☀️';
+	}
+}
+
+function toggleTheme() {
+	document.body.classList.toggle('dark');
+	const isDark = document.body.classList.contains('dark');
+	themeBtn.textContent = isDark ? '☀️' : '🌙';
+	localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+function render(data) {
+	list.innerHTML = "";
+	const currentUser = localStorage.getItem('currentUser');
+	const favorites = JSON.parse(localStorage.getItem(`fav_${currentUser}`)) || [];
+
+	data.forEach(a => {
+		const genresHtml = a.genres ? a.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('') : '';
+		const isFav = favorites.includes(a.id);
+		const favIcon = isFav ? '❤️' : '🤍';
+
+		list.innerHTML += `
+			<div class="card">
+				<img src="${a.img}" alt="${a.title}">
+				<h3>${a.title}</h3>
+				<div class="genres">${genresHtml}</div>
+				<div style="display: flex; gap: 10px; margin: auto 10px 10px 10px;">
+					<button style="flex: 1; margin: 0;" onclick="openPlayer(${a.id})">Смотреть</button>
+					<button style="width: 40px; margin: 0; background: #333;" onclick="toggleFavorite(${a.id}, this)">${favIcon}</button>
+				</div>
+			</div>
+		`;
+	});
+}
+
+// --- 3. ПЛЕЕР ---
+
+function openPlayer(id) {
+	const selectedAnime = anime.find(a => a.id === id);
+	if (selectedAnime && selectedAnime.episodes?.length > 0) {
+		document.getElementById('catalog-section').style.display = 'none';
+		document.getElementById('player-section').style.display = 'block';
+		document.getElementById('player-title').innerText = selectedAnime.title;
+		loadEpisode(selectedAnime.episodes[0].src, 0, selectedAnime.episodes);
+	} else {
+		alert("Видео еще не добавлено!");
+	}
+}
+
+function loadEpisode(src, activeIndex, episodes) {
+	const iframe = document.getElementById('video-iframe');
+	const btnContainer = document.getElementById('episode-buttons');
+	iframe.src = src;
+
+	btnContainer.innerHTML = ''; 
+	episodes.forEach((ep, index) => {
+		const btn = document.createElement('button');
+		btn.innerText = ep.title;
+		btn.className = index === activeIndex ? 'ep-btn active' : 'ep-btn';
+		btn.onclick = () => loadEpisode(ep.src, index, episodes);
+		btnContainer.appendChild(btn);
+	});
+}
+
+function closePlayer() {
+	document.getElementById('video-iframe').src = ''; 
+	document.getElementById('catalog-section').style.display = 'block';
+	document.getElementById('player-section').style.display = 'none';
+}
+
+// --- 4. АВТОРИЗАЦИЯ И ИЗБРАННОЕ ---
+
+function openAuthModal() {
+	document.getElementById('auth-modal').style.display = 'flex';
+}
+
+function closeAuthModal() {
+	document.getElementById('auth-modal').style.display = 'none';
+}
+
+function toggleAuthMode() {
+	isLoginMode = !isLoginMode;
+	document.getElementById('modal-title').innerText = isLoginMode ? 'Вход' : 'Регистрация';
+	document.getElementById('submit-auth-btn').innerText = isLoginMode ? 'Войти' : 'Создать аккаунт';
+}
+
+function handleAuth() {
+	const userInp = document.getElementById('username-input').value.trim();
+	const passInp = document.getElementById('password-input').value.trim();
+
+	if (!userInp || !passInp) return alert("Заполните поля!");
+
+	// Логика АДМИНА
+	if (userInp === 'Devolper' && passInp === '195678') {
+		localStorage.setItem('currentUser', 'Devolper');
+		localStorage.setItem('isAdmin', 'true');
+		window.location.href = 'admin.html';
+		return;
+	}	if (userInp === 'admin' && passInp === 'admin123') {
+		localStorage.setItem('currentUser', 'Devolper');
+		localStorage.setItem('isAdmin', 'true');
+		window.location.href = 'admin.html';
+		return;
+	}
+
+	let users = JSON.parse(localStorage.getItem('users')) || {};
+
+	if (isLoginMode) {
+		if (users[userInp] === passInp) {
+			localStorage.setItem('currentUser', userInp);
+			localStorage.removeItem('isAdmin');
+			location.reload();
+		} else {
+			alert("Ошибка входа!");
+		}
+	} else {
+		users[userInp] = passInp;
+		localStorage.setItem('users', JSON.stringify(users));
+		alert("Успешная регистрация!");
+		toggleAuthMode();
+	}
+}
+
+function checkAuth() {
+	const currentUser = localStorage.getItem('currentUser');
+	const isAdmin = localStorage.getItem('isAdmin') === 'true';
+	const adminLink = document.querySelector('a[href="admin.html"]');
+	 
+	if (currentUser) {
+		document.getElementById('user-greeting').style.display = 'inline';
+		document.getElementById('username-display').innerText = currentUser;
+		document.getElementById('auth-main-btn').innerText = 'Выйти';
+		document.getElementById('auth-main-btn').onclick = () => {
+			localStorage.removeItem('currentUser');
+			localStorage.removeItem('isAdmin');
+			location.reload();
+		};
+		if (adminLink) adminLink.style.display = isAdmin ? 'inline' : 'none';
+	}
+}
+
+function toggleFavorite(id, btn) {
+	const user = localStorage.getItem('currentUser');
+	if (!user) return alert("Войдите в аккаунт!");
+
+	let favs = JSON.parse(localStorage.getItem(`fav_${user}`)) || [];
+	if (favs.includes(id)) {
+		favs = favs.filter(f => f !== id);
+		btn.innerText = '🤍';
+	} else {
+		favs.push(id);
+		btn.innerText = '❤️';
+	}
+	localStorage.setItem(`fav_${user}`, JSON.stringify(favs));
+}
+
+// Сүзу функциясы: Жанр мен Іздеу біріктірілді
+function updateFilter() {
+    const query = search.value.toLowerCase();
+    const genre = genreFilter.value;
+    
+    const filtered = anime.filter(a => {
+        const matchTitle = a.title.toLowerCase().includes(query);
+        const matchGenre = genre === "" || (a.genres && a.genres.includes(genre));
+        return matchTitle && matchGenre;
+    });
+    
+    render(filtered);
+}
+
+search.addEventListener('input', updateFilter);
+genreFilter.addEventListener('change', updateFilter);
+
+// Запуск
+initTheme();
+initGenres();
+checkAuth();
+render(anime);
+</script>
+
+</body>
+</html>

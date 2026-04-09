@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-Anime | Админ панель</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        /* Бүйірлік мәзір */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #9303C5, #02060E);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 10px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 22px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            margin: 5px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* Негізгі контент */
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #9303C5;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            min-width: 500px; 
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .btn-delete {
+            background: #e04022;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #ff512f;
+        }
+
+        .stats-cards {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(45deg, #9303C5, #02060E);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .add-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            display: grid;
+            gap: 10px;
+        }
+
+        .add-form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .add-form label {
+            font-weight: bold;
+            color: #444;
+            margin-top: 5px;
+        }
+
+        /* --- Жанр батырмаларына арналған дизайн --- */
+        .genre-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 5px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .genre-group h4 {
+            margin: 0 0 10px 0;
+            color: #777;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .genre-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .genre-btn {
+            background: #e0e0e0;
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .genre-btn.active {
+            background: #9303C5;
+            color: white;
+            border-color: #9303C5;
+            box-shadow: 0 2px 5px rgba(147, 3, 197, 0.4);
+        }
+
+        .btn-add {
+            padding: 12px;
+            background: #9303C5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .btn-add:disabled {
+            background: #888;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 15px 10px;
+                box-sizing: border-box;
+                justify-content: center;
+            }
+
+            .sidebar h2 {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .nav-item {
+                flex: 1 1 auto;
+                text-align: center;
+                margin: 5px;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .stats-cards {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>W-Anime Admin</h2>
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">📊 Басты бет</div>
+        <div class="nav-item" onclick="switchTab('users', this)">👥 Қолданушылар</div>
+        <div class="nav-item" onclick="switchTab('anime', this)">🎬 Аниме базасы</div>
+        <a href="index.html" class="nav-item">⬅ Сайтқа қайту</a>
+    </div>
+
+    <div class="content">
+        <div id="dashboard" class="section active">
+            <h1>Жалпы статистика</h1>
+            <div class="stats-cards">
+                <div class="card">
+                    <p>Барлық қолданушылар</p>
+                    <h3 id="stat-users">0</h3>
+                </div>
+                <div class="card">
+                    <p>Жүктелген анимелер</p>
+                    <h3 id="stat-anime">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="users" class="section">
+            <h1>Қолданушыларды басқару</h1>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Логин</th>
+                            <th>Құпия сөз</th>
+                            <th>Әрекет</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="anime" class="section">
+            <div class="add-form">
+                <h3>Жаңа аниме қосу</h3>
+                
+                <label>Аниме атауы:</label>
+                <input type="text" id="new-title" placeholder="Аниме атауын жазыңыз">
+                
+                <label>Обложка (сілтемесі немесе атауы):</label>
+                <input type="text" id="new-img" placeholder="Суреттің сілтемесін (url) немесе атауын жазыңыз">
+                
+                <label>Жанрлар (бірнешеуін таңдауға болады):</label>
+                <div class="genre-container" id="genre-container">
+                    
+                    <div class="genre-group">
+                        <h4>Демографические группы</h4>
+                        <div class="genre-buttons">
+                            <button type="button" class="genre-btn" data-value="Сёнэн">Сёнэн</button>
+                            <button type="button" class="genre-btn" data-value="Сёдзё">Сёдзё</button>
+                            <button type="button" class="genre-btn" data-value="Сэйнэн">Сэйнэн</button>
+                            <button type="button" class="genre-btn" data-value="Дзёсэй">Дзёсэй</button>
+                            <button type="button" class="genre-btn" data-value="Кодомо">Кодомо</button>
+                        </div>
+                    </div>
+
+                    <div class="genre-group">
+                        <h4>Основные жанры</h4>
+                        <div class="genre-buttons">
+                            <button type="button" class="genre-btn" data-value="Экшен">Экшен</button>
+                            <button type="button" class="genre-btn" data-value="Фэнтези">Фэнтези</button>
+                            <button type="button" class="genre-btn" data-value="Комедия">Комедия</button>
+                            <button type="button" class="genre-btn" data-value="Романтика">Романтика</button>
+                            <button type="button" class="genre-btn" data-value="Драма">Драма</button>
+                            <button type="button" class="genre-btn" data-value="Приключения">Приключения</button>
+                            <button type="button" class="genre-btn" data-value="Фантастика">Фантастика</button>
+                            <button type="button" class="genre-btn" data-value="Ужасы">Ужасы</button>
+                            <button type="button" class="genre-btn" data-value="Детектив">Детектив</button>
+                            <button type="button" class="genre-btn" data-value="Повседневность">Повседневность</button>
+                            <button type="button" class="genre-btn" data-value="Психология">Психология</button>
+                            <button type="button" class="genre-btn" data-value="Триллер">Триллер</button>
+                            <button type="button" class="genre-btn" data-value="Мистика">Мистика</button>
+                        </div>
+                    </div>
+
+                    <div class="genre-group">
+                        <h4>Специфические направления</h4>
+                        <div class="genre-buttons">
+                            <button type="button" class="genre-btn" data-value="Исекай">Исекай</button>
+                            <button type="button" class="genre-btn" data-value="Меха">Меха</button>
+                            <button type="button" class="genre-btn" data-value="Спокон">Спокон</button>
+                            <button type="button" class="genre-btn" data-value="Махо-сёдзё">Махо-сёдзё</button>
+                            <button type="button" class="genre-btn" data-value="Киберпанк">Киберпанк</button>
+                            <button type="button" class="genre-btn" data-value="Постапокалипсис">Постапокалипсис</button>
+                            <button type="button" class="genre-btn" data-value="Пародия">Пародия</button>
+                            <button type="button" class="genre-btn" data-value="Гарем">Гарем</button>
+                            <button type="button" class="genre-btn" data-value="Этти">Этти</button>
+                            <button type="button" class="genre-btn" data-value="Самурайский боевик">Самурайский боевик</button>
+                            <button type="button" class="genre-btn" data-value="Школа">Школа</button>
+                            <button type="button" class="genre-btn" data-value="Военное">Военное</button>
+                            <button type="button" class="genre-btn" data-value="Музыкальный">Музыкальный</button>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <button class="btn-add" id="btn-add-anime" onclick="addNewAnime()">Каталогқа қосу (Добавить)</button>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Атауы</th>
+                            <th>Жанрлар</th>
+                            <th>Әрекет</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anime-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div id="episode-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box;">
+    <div style="background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; color: #333; box-sizing: border-box;">
+        <span onclick="closeEpisodeModal()" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; color: #888;">&times;</span>
+        <h2 id="modal-anime-title" style="color: #9303C5; margin-top: 0; font-size: 20px;">Аниме атауы</h2>
+        
+        <div style="margin-bottom: 20px; display: grid; gap: 10px;">
+            <input type="text" id="ep-title" placeholder="Бөлім атауы (мысалы: 1-бөлім)" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; box-sizing: border-box;">
+            <input type="text" id="ep-src" placeholder="Видео сілтемесі (iframe src)" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; box-sizing: border-box;">
+            <button onclick="addEpisode()" style="padding: 10px; background: #9303C5; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">Бөлімді қосу</button>
+        </div>
+        
+        <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Қосылған бөлімдер:</h4>
+        <div id="episodes-list" style="max-height: 200px; overflow-y: auto; font-size: 14px;">
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Жанр батырмаларына басу логикасы (белсенді ету/алып тастау)
+        document.querySelectorAll('.genre-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            element.classList.add('active');
+            loadData();
+        }
+
+        function loadData() {
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+            let userKeys = Object.keys(users);
+            document.getElementById('stat-users').innerText = userKeys.length;
+            
+            let uTbody = document.getElementById('users-tbody');
+            uTbody.innerHTML = '';
+            userKeys.forEach((user, i) => {
+                uTbody.innerHTML += `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td><b>${user}</b></td>
+                        <td>${users[user]}</td>
+                        <td><button class="btn-delete" onclick="deleteUser('${user}')">Өшіру</button></td>
+                    </tr>`;
+            });
+
+            let animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            document.getElementById('stat-anime').innerText = animeData.length;
+            
+            let aTbody = document.getElementById('anime-table-body');
+            aTbody.innerHTML = '';
+            animeData.forEach(item => {
+                let genresText = Array.isArray(item.genres) ? item.genres.join(', ') : item.genres;
+                
+                aTbody.innerHTML += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td onclick="openEpisodeModal(${item.id})" style="cursor:pointer; color:#9303C5; text-decoration:underline;">
+                            <b>${item.title}</b>
+                        </td>
+                        <td>${genresText}</td>
+                        <td><button class="btn-delete" onclick="deleteAnime(${item.id})">Өшіру</button></td>
+                    </tr>`;
+            });
+        }
+
+        function addNewAnime() {
+            const title = document.getElementById('new-title').value.trim();
+            const imgValue = document.getElementById('new-img').value.trim();
+
+            // Барлық белсенді (басылған) жанрларды жинау
+            const activeGenreButtons = document.querySelectorAll('.genre-btn.active');
+            const selectedGenres = Array.from(activeGenreButtons).map(btn => btn.getAttribute('data-value'));
+
+            if (!title || !imgValue || selectedGenres.length === 0) {
+                alert("Атауын, обложкасын және кем дегенде бір жанрды көрсетіңіз!");
+                return;
+            }
+
+            let animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            
+            const newEntry = {
+                id: Date.now(),
+                title: title,
+                img: imgValue, 
+                genres: selectedGenres,
+                episodes: [] 
+            };
+
+            animeData.push(newEntry);
+            localStorage.setItem('animeData', JSON.stringify(animeData));
+
+            document.getElementById('new-title').value = '';
+            document.getElementById('new-img').value = '';
+            document.querySelectorAll('.genre-btn').forEach(btn => btn.classList.remove('active'));
+            
+            alert("Аниме сәтті қосылды! Видео бөлімдерін кестедегі аниме атын басу арқылы қоса аласыз.");
+            loadData();
+        }
+
+        function deleteAnime(id) {
+            if(confirm("Бұл анимені өшіруге сенімдісіз бе?")) {
+                let animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+                animeData = animeData.filter(a => a.id !== id);
+                localStorage.setItem('animeData', JSON.stringify(animeData));
+                loadData();
+            }
+        }
+
+        function deleteUser(username) {
+            if (confirm(`"${username}" қолданушысын өшіруге сенімдісіз бе?`)) {
+                let users = JSON.parse(localStorage.getItem('users')) || {};
+                delete users[username];
+                localStorage.setItem('users', JSON.stringify(users));
+                loadData();
+            }
+        }
+
+        window.onload = loadData;
+        let currentAnimeId = null; 
+
+        function openEpisodeModal(id) {
+            currentAnimeId = id;
+            const animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            const selectedAnime = animeData.find(a => a.id === id);
+            
+            if (!selectedAnime) return;
+
+            document.getElementById('modal-anime-title').innerText = selectedAnime.title;
+            document.getElementById('episode-modal').style.display = 'flex';
+            
+            renderEpisodesList();
+        }
+
+        function closeEpisodeModal() {
+            document.getElementById('episode-modal').style.display = 'none';
+            currentAnimeId = null;
+        }
+
+        function renderEpisodesList() {
+            const animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            const selectedAnime = animeData.find(a => a.id === currentAnimeId);
+            const listDiv = document.getElementById('episodes-list');
+            
+            listDiv.innerHTML = '';
+            
+            if (selectedAnime.episodes && selectedAnime.episodes.length > 0) {
+                selectedAnime.episodes.forEach((ep, index) => {
+                    listDiv.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px;">
+                            <span>${ep.title}</span>
+                            <button onclick="deleteEpisode(${index})" style="background:none; border:none; color:red; cursor:pointer;">Өшіру</button>
+                        </div>
+                    `;
+                });
+            } else {
+                listDiv.innerHTML = '<p style="color:#999; text-align:center;">Бөлімдер әлі қосылмаған</p>';
+            }
+        }
+
+        function addEpisode() {
+            const title = document.getElementById('ep-title').value.trim();
+            const src = document.getElementById('ep-src').value.trim();
+
+            if (!title || !src) {
+                alert("Бөлім атауын және сілтемесін енгізіңіз!");
+                return;
+            }
+
+            let animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            const animeIndex = animeData.findIndex(a => a.id === currentAnimeId);
+
+            if (animeIndex === -1) return;
+
+            if (!animeData[animeIndex].episodes) {
+                animeData[animeIndex].episodes = [];
+            }
+
+            animeData[animeIndex].episodes.push({ title, src });
+            localStorage.setItem('animeData', JSON.stringify(animeData));
+
+            document.getElementById('ep-title').value = '';
+            document.getElementById('ep-src').value = '';
+
+            renderEpisodesList();
+        }
+
+        function deleteEpisode(epIndex) {
+            if (!confirm("Бұл бөлімді өшіруді растайсыз ба?")) return;
+
+            let animeData = JSON.parse(localStorage.getItem('animeData')) || [];
+            const animeIndex = animeData.findIndex(a => a.id === currentAnimeId);
+
+            if (animeIndex !== -1) {
+                animeData[animeIndex].episodes.splice(epIndex, 1);
+                localStorage.setItem('animeData', JSON.stringify(animeData));
+                renderEpisodesList();
+            }
+        }
+    </script>
+</body>
+</html>
