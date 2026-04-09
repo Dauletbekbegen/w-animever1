@@ -556,8 +556,8 @@
 		const htmlString = data.map(a => {
 			// Проверяем, есть ли ссылка. Если нет - кнопка неактивна.
 			const buttonHtml = a.link && a.link !== "" 
-				? `<button onclick="window.open('${a.link}', '_blank')">Смотреть</button>` 
-				: `<button disabled>Скоро...</button>`;
+    ? `<a href="${a.link}" target="_blank" style="text-decoration:none; display:block; margin: auto 10px 10px 10px;"><button style="width: 100%; margin: 0;">Смотреть</button></a>` 
+    : `<button disabled>Скоро...</button>`;
 
 			return `
 				<div class="card">
