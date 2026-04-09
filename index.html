@@ -934,7 +934,9 @@ function handleAuth() {
 		localStorage.setItem('isAdmin', 'true');
 		window.location.href = 'admin.html';
 		return;
-	}	if (userInp === 'admin' && passInp === 'admin123') {
+	}	
+	
+	if (userInp === 'admin' && passInp === 'admin123') {
 		localStorage.setItem('currentUser', 'Devolper');
 		localStorage.setItem('isAdmin', 'true');
 		window.location.href = 'admin.html';
